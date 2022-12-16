@@ -1,0 +1,48 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+.barcode-scanner {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+.dce-bg-loading {
+  display: none;
+  animation: 1s linear infinite dce-rotate;
+  width: 40%;
+  height: 40%;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  fill: #aaa;
+}
+.dce-video-container {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+.dce-video-container-center {
+  width: 20rem;
+  height: 24rem;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px solid rgb(90, 221, 129);
+}
+@keyframes dce-rotate {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+}
