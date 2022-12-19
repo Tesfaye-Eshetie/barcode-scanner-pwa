@@ -4,6 +4,8 @@ import { BarcodeReader } from "dynamsoft-javascript-barcode";
 import VideoDecode from "./VideoDecode";
 import DisplayCamera from "./DisplayCamera";
 
+import Container from "react-bootstrap/Container";
+
 export default function ReadBarcod() {
   const [barcode, setBarcode] = useState("");
   const [showScanner, setShowScanner] = useState(false);
@@ -30,11 +32,16 @@ export default function ReadBarcod() {
     return <VideoDecode setBarcode={setBarcode} />;
   } else {
     return (
-      <DisplayCamera
-        barcode={barcode}
-        setBarcode={setBarcode}
-        setShowScanner={setShowScanner}
-      />
+      <Container
+        style={{ width: "390px", height: "844px" }}
+        className="d-flex justify-content-center align-items-center"
+      >
+        <DisplayCamera
+          barcode={barcode}
+          setBarcode={setBarcode}
+          setShowScanner={setShowScanner}
+        />
+      </Container>
     );
   }
 }
