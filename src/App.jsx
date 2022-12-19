@@ -8,6 +8,7 @@ function App() {
       style={{ width: "390px", height: "844px" }}
       className="d-flex justify-content-center align-items-center"
     >
+      jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
       <ReadBarcod />
     </Container>
   );
