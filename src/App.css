@@ -28,7 +28,7 @@ picture,
 svg,
 video {
   display: block;
-  max-width: 100%;
+  /* max-width: 100%; */
 }
 
 /* removes spacing between cells in tables */
