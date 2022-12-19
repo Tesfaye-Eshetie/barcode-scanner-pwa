@@ -3,7 +3,7 @@
   height: 100%;
   width: 100vw;
   height: 100vh;
-  background: #ddd;
+  background: #666;
   position: relative;
 }
 .dce-bg-loading {
@@ -23,11 +23,13 @@
   position: absolute;
   left: 0;
   top: 0;
-  width: 300%;
+  width: 400%;
   height: 100%;
   min-width: 100vw;
   min-height: 100vh;
+  max-height: 100vh;
   margin-left: -100%;
+  overflow-y: hidden;
 }
 .dce-video-container-center {
   width: 16rem;
@@ -46,5 +48,16 @@
   }
   to {
     transform: rotate(1turn);
+  }
+}
+
+@media (min-width: 400px) {
+  .dce-video-container {
+    width: 300%;
+  }
+}
+@media (min-width: 600px) {
+  .dce-video-container {
+    width: 300%;
   }
 }
