@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: barcode-scanner
+    image: barcode-scanner:latest
+    build:
+      context: .
+    ports:
+      - "5173:5173"
+    stdin_open: true
