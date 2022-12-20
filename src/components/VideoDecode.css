@@ -1,4 +1,4 @@
-.videoContainer {
+.video-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,7 +34,17 @@
   width: 100%;
   height: 100%;
 }
-
+.div-ui-container-center {
+  border: 2px #6ee6a2 solid;
+  width: 40%;
+  height: 40%;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
 @keyframes dce-rotate {
   from {
     transform: rotate(0turn);
