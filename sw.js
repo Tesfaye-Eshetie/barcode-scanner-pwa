@@ -1,11 +1,11 @@
 const self = this;
 
-// Install SW
+// Installing Service Worker
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open("static").then((cache) => {
       console.log("Opened cache");
-      return cache.addAll(["/", "index.html"]);
+      return cache.addAll(["/", "index.html", "/manifest.json"]);
     })
   );
 });
@@ -28,7 +28,7 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-// Activate the SW
+// Activate the Service Worker
 self.addEventListener("activate", (event) => {
   const cacheWhitelist = [];
   cacheWhitelist.push("static");
