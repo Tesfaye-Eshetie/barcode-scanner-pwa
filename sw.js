@@ -1,1 +1,48 @@
-if(!self.define){let e,i={};const n=(n,s)=>(n=new URL(n+".js",s).href,i[n]||new Promise((i=>{if("document"in self){const e=document.createElement("script");e.src=n,e.onload=i,document.head.appendChild(e)}else e=n,importScripts(n),i()})).then((()=>{let e=i[n];if(!e)throw new Error(`Module ${n} didn’t register its module`);return e})));self.define=(s,r)=>{const o=e||("document"in self?document.currentScript.src:"")||location.href;if(i[o])return;let d={};const t=e=>n(e,o),c={module:{uri:o},exports:d,require:t};i[o]=Promise.all(s.map((e=>c[e]||t(e)))).then((e=>(r(...e),d)))}}define(["./workbox-3625d7b0"],(function(e){"use strict";self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"assets/index-65c56a2e.css",revision:null},{url:"assets/index-a3d8218e.js",revision:null},{url:"index.html",revision:"0404c7484a840606645ba0b82839336f"},{url:"registerSW.js",revision:"b421f4dab4ef5832b1279c28afb05803"},{url:"images/icon-192x192.png",revision:"a82c91972e42d8790dcff4be3d17e891"},{url:"images/icon-256x256.png",revision:"e15bd9825781805ba8142b2dff82d131"},{url:"images/icon-384x384.png",revision:"511bf3571278155e58bdb22132dc7663"},{url:"images/icon-512x512.png",revision:"d96a34ea0c44cf7f0376d7027dd548e4"},{url:"manifest.webmanifest",revision:"82654ea76b0dd66ecca6e3d6e8b7c6b1"}],{}),e.cleanupOutdatedCaches(),e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html")))}));
+const self = this;
+
+// Install SW
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open("static").then((cache) => {
+      console.log("Opened cache");
+      return cache.addAll(["/", "index.html"]);
+    })
+  );
+});
+
+// Listen for requests
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      if (response) {
+        return response;
+      } else {
+        return fetch(event.request).then((res) => {
+          return caches.open("dynamic").then((cache) => {
+            cache.put(event.request.url, res.clone());
+            return res;
+          });
+        });
+      }
+    })
+  );
+});
+
+// Activate the SW
+self.addEventListener("activate", (event) => {
+  const cacheWhitelist = [];
+  cacheWhitelist.push("static");
+  cacheWhitelist.push("dynamic");
+
+  event.waitUntil(
+    caches.keys().then((cacheNames) =>
+      Promise.all(
+        cacheNames.map((cacheName) => {
+          if (!cacheWhitelist.includes(cacheName)) {
+            return caches.delete(cacheName);
+          }
+        })
+      )
+    )
+  );
+});
