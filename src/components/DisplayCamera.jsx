@@ -37,7 +37,7 @@ export default function DisplayCamera({ barcode, setBarcode, setShowScanner }) {
   return (
     <Card>
       <Card.Title className="text-capitalize pb-3 fw-bolder text-center mt-4">
-        Dynamsoft Scanner Form
+        Dynamsoft Scanner
       </Card.Title>
       <Card.Body className="p-4">
         <Form action="/" noValidate onSubmit={handleSubmit}>
