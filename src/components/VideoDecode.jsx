@@ -37,7 +37,7 @@ export default function VideoDecode({ setBarcode, showScanner }) {
     return () => {
       window.removeEventListener("resize", () => setFullScreen("full-screen"));
     };
-  }, []);
+  }, [showScanner]);
 
   return (
     <div ref={elRef} className="video-container">
