@@ -10,7 +10,7 @@
   margin: 0;
 }
 .div-ui-container {
-  position: fixed;
+  position: sticky;
   width: 100vw;
   height: 100vh;
   left: 0;
@@ -30,9 +30,11 @@
   fill: #aaa;
 }
 .dce-video-container {
-  position: relative;
+  position: sticky;
   width: 100%;
   height: 100%;
+  left: 0;
+  top: -20px;
 }
 .div-ui-container-center {
   border: 2px #6ee6a2 solid;
