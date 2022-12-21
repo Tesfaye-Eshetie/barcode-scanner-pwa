@@ -30,13 +30,6 @@ export default function VideoDecode({ setBarcode }) {
         alert(errMsg);
       }
     })();
-    const timer = setTimeout(() => {
-      () => {
-        window.dispatchEvent(new Event("resize"));
-      },
-        2500;
-    });
-    return () => clearTimeout(timer);
   }, []);
 
   return (
