@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import "../dbr"; // import side effects. The license, engineResourcePath, so on.
 import { BarcodeReader } from "dynamsoft-javascript-barcode";
+import ScannerCard from "./ScannerCard";
 import VideoDecode from "./VideoDecode";
-import DisplayCamera from "./DisplayCamera";
+import { BarcodeContext, ShowScannerContext } from "../contexts/ScannerContext";
 
 import Container from "react-bootstrap/Container";
 
-export default function ReadBarcod() {
-  const [barcode, setBarcode] = useState("");
-  const [showScanner, setShowScanner] = useState(false);
+export default function ScannerContainer() {
+  const barcode = useContext(BarcodeContext);
+  const showScanner = useContext(ShowScannerContext);
 
   useEffect(() => {
     (async () => {
@@ -28,19 +29,19 @@ export default function ReadBarcod() {
     })();
   }, []);
 
-  if (!barcode && showScanner) {
-    return <VideoDecode setBarcode={setBarcode} />;
+  if (!barcode[0] && showScanner[0]) {
+    return <VideoDecode setBarcode={barcode[1]} />;
+  } else if (!barcode[2] && showScanner[2]) {
+    return <VideoDecode setBarcode={barcode[3]} />;
+  } else if (!barcode[4] && showScanner[4]) {
+    return <VideoDecode setBarcode={barcode[5]} />;
   } else {
     return (
       <Container
         style={{ width: "390px", height: "844px" }}
-        className="d-flex justify-content-center align-items-center"
+        className="d-flex flex-column justify-content-center align-items-center"
       >
-        <DisplayCamera
-          barcode={barcode}
-          setBarcode={setBarcode}
-          setShowScanner={setShowScanner}
-        />
+        <ScannerCard />
       </Container>
     );
   }
