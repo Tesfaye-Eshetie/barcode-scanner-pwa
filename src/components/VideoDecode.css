@@ -11,9 +11,9 @@
 }
 .div-ui-container {
   position: fixed;
-  width: calc(100vw + 12rem);
+  width: calc(100vw + 20rem);
   height: 100vh;
-  left: -6rem;
+  left: -10rem;
   top: 0;
 }
 .dce-bg-loading {
