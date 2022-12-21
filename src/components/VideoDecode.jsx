@@ -30,12 +30,13 @@ export default function VideoDecode({ setBarcode }) {
         alert(errMsg);
       }
     })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      window.dispatchEvent(new Event("resize"));
-    })();
+    const timer = setTimeout(() => {
+      () => {
+        window.dispatchEvent(new Event("resize"));
+      },
+        2500;
+    });
+    return () => clearTimeout(timer);
   }, []);
 
   return (
