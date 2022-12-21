@@ -24,7 +24,7 @@ export default function ReadBarcod() {
         });
         showScanner[1](false);
         showScanner[3](false);
-        showScanner[3](false);
+        showScanner[5](false);
         barcode[1]("");
         barcode[3]("");
         barcode[5]("");
@@ -32,7 +32,7 @@ export default function ReadBarcod() {
         addBarcode(barcode[2], { assetID: barcode[2], tagID: barcode[4] });
         showScanner[1](false);
         showScanner[3](false);
-        showScanner[3](false);
+        showScanner[5](false);
         barcode[1]("");
         barcode[3]("");
         barcode[5]("");

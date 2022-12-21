@@ -9,18 +9,19 @@
   color: #455a64;
   margin: 0;
 }
-.div-ui-container {
+.div-ui-container,
+.full-screen {
   position: fixed;
-  width: calc(100vw + 60rem);
+  width: calc(100vw + 20rem);
   height: 100vh;
-  left: -30rem;
+  left: -10rem;
   top: 0;
 }
 .dce-bg-loading {
   display: none;
   animation: 1s linear infinite dce-rotate;
-  width: 16rem;
-  height: 16rem;
+  width: 40%;
+  height: 40%;
   position: absolute;
   margin: auto;
   left: 0;
@@ -36,8 +37,8 @@
 }
 .div-ui-container-center {
   border: 2px #6ee6a2 solid;
-  width: 16rem;
-  height: 16rem;
+  width: 40%;
+  height: 40%;
   position: absolute;
   margin: auto;
   left: 0;
