@@ -6,22 +6,11 @@
     <link rel="icon" type="image/svg+xml" href="/barcode-scanner-pwa/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="apple-touch-icon" href="/barcode-scanner-pwa/images/icon-192x192.png" />
-    <link rel="manifest" href="/barcode-scanner-pwa/manifest.json" />
     <title>React Barcode Reader</title>
-    <script type="module" crossorigin src="/barcode-scanner-pwa/assets/index-8c2a24ff.js"></script>
+    <script type="module" crossorigin src="/barcode-scanner-pwa/assets/index-c09febe9.js"></script>
     <link rel="stylesheet" href="/barcode-scanner-pwa/assets/index-40078c35.css">
-  </head>
+  <link rel="manifest" href="/barcode-scanner-pwa/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/barcode-scanner-pwa/registerSW.js"></script></head>
   <body>
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("./sw.js")
-            .then((reg) => console.log("Success: ", reg.scope))
-            .catch((err) => console.log("Failure: ", err));
-        });
-      }
-    </script>
     <div id="root"></div>
     
   </body>
