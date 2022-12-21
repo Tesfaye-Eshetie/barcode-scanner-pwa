@@ -11,8 +11,6 @@ export default function VideoDecode({ setBarcode }) {
     (async () => {
       try {
         const scanner = await BarcodeScanner.createInstance();
-        const resizeEvent = new Event("resize");
-        window.dispatchEvent(resizeEvent);
         await scanner.setUIElement(elRef.current);
         scanner.onFrameRead = (results) => {
           for (let result of results) {

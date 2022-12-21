@@ -29,6 +29,7 @@ export default function ReadBarcod() {
   }, []);
 
   if (!barcode && showScanner) {
+    window.dispatchEvent(new Event('resize'));
     return <VideoDecode setBarcode={setBarcode} />;
   } else {
     return (
