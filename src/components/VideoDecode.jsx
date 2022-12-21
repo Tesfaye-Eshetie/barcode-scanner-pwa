@@ -6,11 +6,22 @@ import "./VideoDecode.css";
 export default function VideoDecode({ setBarcode }) {
   const [] = useState();
   const elRef = useRef();
+  let pScanner = null;
+
+  useEffect(() => {
+    (async () => {
+      let scanner = await pScanner;
+      // trigger the resize event to adjust the positioning of the code area
+      const resizeEvent = new Event("resize");
+      window.dispatchEvent(resizeEvent);
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
       try {
-        const scanner = await BarcodeScanner.createInstance();
+        let scanner = await (pScanner =
+          pScanner || BarcodeScanner.createInstance());
         await scanner.setUIElement(elRef.current);
         scanner.onFrameRead = (results) => {
           for (let result of results) {

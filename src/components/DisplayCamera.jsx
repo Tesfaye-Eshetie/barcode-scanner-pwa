@@ -14,7 +14,6 @@ export default function DisplayCamera({ barcode, setBarcode, setShowScanner }) {
   };
 
   const scanBarcode = () => {
-    window.dispatchEvent(new Event("resize"));
     setShowScanner(true);
   };
 
@@ -38,7 +37,7 @@ export default function DisplayCamera({ barcode, setBarcode, setShowScanner }) {
   return (
     <Card>
       <Card.Title className="text-capitalize pb-3 fw-bolder text-center mt-4">
-        Dynamsoft Scanner
+        Dynamsoft Scanner Form
       </Card.Title>
       <Card.Body className="p-4">
         <Form action="/" noValidate onSubmit={handleSubmit}>
