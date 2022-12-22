@@ -14,7 +14,7 @@ export default function DisplayCamera({
   };
 
   const scanBarcode = () => {
-    setTimeout(() => setShowScanner(true), 1000);
+    setShowScanner(true);
   };
   const removeTag = () => {
     setBarcode("");

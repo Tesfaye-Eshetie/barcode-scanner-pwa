@@ -9,13 +9,22 @@
   color: #455a64;
   margin: 0;
 }
-.div-ui-container,
+.div-ui-container {
+  position: fixed;
+  width: calc(100vw + 20rem);
+  height: 100vh;
+  left: -10rem;
+  top: 0;
+  display: none;
+}
 .full-screen {
   position: fixed;
   width: calc(100vw + 20rem);
   height: 100vh;
   left: -10rem;
   top: 0;
+  margin: 0;
+  display: block;
 }
 .dce-bg-loading {
   display: none;
