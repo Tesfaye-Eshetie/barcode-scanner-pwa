@@ -30,11 +30,11 @@ export default function ScannerContainer() {
   }, []);
 
   if (!barcode[0] && showScanner[0]) {
-    return <VideoDecode setBarcode={barcode[1]} showScanner={showScanner[0]} />;
+    return <VideoDecode setBarcode={barcode[1]} />;
   } else if (!barcode[2] && showScanner[2]) {
-    return <VideoDecode setBarcode={barcode[3]} showScanner={showScanner[2]} />;
+    return <VideoDecode setBarcode={barcode[3]} />;
   } else if (!barcode[4] && showScanner[4]) {
-    return <VideoDecode setBarcode={barcode[5]} showScanner={showScanner[4]} />;
+    return <VideoDecode setBarcode={barcode[5]} />;
   } else {
     return (
       <Container
