@@ -11,6 +11,8 @@
 }
 .div-ui-container {
   position: fixed;
+  width: calc(100vw + 20rem);
+  height: 100vh;
   left: -10rem;
   top: 0;
   margin: 0;
