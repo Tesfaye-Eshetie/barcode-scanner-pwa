@@ -11,12 +11,9 @@
 }
 .div-ui-container {
   position: fixed;
-  width: 100vw;
+  width: 178vh;
   height: 100vh;
-  left: 0;
-  top: 0;
-  margin: 0;
-  transform: rotate(90deg);
+  margin: auto;
 }
 .dce-bg-loading {
   display: none;
@@ -38,8 +35,8 @@
 }
 .div-ui-container-center {
   border: 2px #6ee6a2 solid;
-  width: 40%;
-  height: 40%;
+  width: 16rem;
+  height: 16rem;
   position: absolute;
   margin: auto;
   left: 0;
