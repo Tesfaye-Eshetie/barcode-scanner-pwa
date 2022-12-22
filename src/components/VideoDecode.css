@@ -15,7 +15,6 @@
   height: 100vh;
   left: -10rem;
   top: 0;
-  display: none;
 }
 .full-screen {
   position: fixed;
@@ -24,7 +23,6 @@
   left: -10rem;
   top: 0;
   margin: 0;
-  display: block;
 }
 .dce-bg-loading {
   display: none;
