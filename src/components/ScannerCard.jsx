@@ -1,51 +1,59 @@
 import React, { useState, useEffect, useContext } from "react";
 import { addBarcode } from "../database/indexedDB";
-import "../dbr"; // import side effects. The license, engineResourcePath, so on.
-import { BarcodeContext, ShowScannerContext } from "../contexts/ScannerContext";
+import { BarcodeContext } from "../contexts/BarcodeContext";
+import { ShowScannerContext } from "../contexts/ShowScannerContext";
+import ScannerForm from "./ScannerForm";
 
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
-import ScannerInput from "./ScannerInput";
 
-export default function ReadBarcod() {
+export default function ScannerCard() {
   const [disableButton, setDisableButton] = useState(true);
-  const barcode = useContext(BarcodeContext);
-  const showScanner = useContext(ShowScannerContext);
+  const { roomID, assetID, tagID, setRoomID, setAssetID, setTagID } =
+    useContext(BarcodeContext);
+  const {
+    showRoomID,
+    showAssetID,
+    showTagID,
+    setShowRoomID,
+    setShowAssetID,
+    setShowTagID,
+  } = useContext(ShowScannerContext);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (barcode[2] || barcode[4])
-      if (barcode[2] && barcode[2] && barcode[4]) {
-        addBarcode(barcode[2], {
-          roomID: barcode[0],
-          assetID: barcode[2],
-          tagID: barcode[4],
-        });
-        showScanner[1](false);
-        showScanner[3](false);
-        showScanner[5](false);
-        barcode[1]("");
-        barcode[3]("");
-        barcode[5]("");
-      } else {
-        addBarcode(barcode[2], { assetID: barcode[2], tagID: barcode[4] });
-        showScanner[1](false);
-        showScanner[3](false);
-        showScanner[5](false);
-        barcode[1]("");
-        barcode[3]("");
-        barcode[5]("");
-      }
+
+    if (roomID && assetID && tagID) {
+      addBarcode(assetID, {
+        roomID: roomID,
+        assetID: assetID,
+        tagID: tagID,
+      });
+      setShowRoomID(false);
+      setShowAssetID(false);
+      setShowTagID(false);
+      setRoomID("");
+      setAssetID("");
+      setTagID("");
+    } else {
+      addBarcode(assetID, { assetID: assetID, tagID: tagID });
+      setShowRoomID(false);
+      setShowAssetID(false);
+      setShowTagID(false);
+      setRoomID("");
+      setAssetID("");
+      setTagID("");
+    }
   };
 
   useEffect(() => {
-    if (barcode[2] && barcode[4]) {
+    if (assetID && tagID) {
       setDisableButton(false);
     } else {
       setDisableButton(true);
     }
-  }, [barcode[2], barcode[4]]);
+  }, [assetID, tagID]);
 
   return (
     <Card>
@@ -54,24 +62,27 @@ export default function ReadBarcod() {
       </Card.Title>
       <Card.Body className="p-4">
         <Form action="/" noValidate onSubmit={handleSubmit}>
-          <ScannerInput
-            barcode={barcode[0]}
-            setBarcode={barcode[1]}
-            setShowScanner={showScanner[1]}
+          <ScannerForm
+            barcode={roomID}
+            setBarcode={setRoomID}
+            showScanner={showRoomID}
+            setShowScanner={setShowRoomID}
             ID={"Room-ID"}
             placeholder={"4302 (Option)"}
           />
-          <ScannerInput
-            barcode={barcode[2]}
-            setBarcode={barcode[3]}
-            setShowScanner={showScanner[3]}
+          <ScannerForm
+            barcode={assetID}
+            setBarcode={setAssetID}
+            showScanner={showAssetID}
+            setShowScanner={setShowAssetID}
             ID={"Asset-ID"}
             placeholder={"999 87456317AD"}
           />
-          <ScannerInput
-            barcode={barcode[4]}
-            setBarcode={barcode[5]}
-            setShowScanner={showScanner[5]}
+          <ScannerForm
+            barcode={tagID}
+            setBarcode={setTagID}
+            showScanner={showTagID}
+            setShowScanner={setShowTagID}
             ID={"Tag-ID"}
             placeholder={"999 87456317AD"}
           />

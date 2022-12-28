@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { BarcodeScanner } from "dynamsoft-javascript-barcode";
 
 import "./VideoDecode.css";
@@ -14,7 +14,6 @@ export default function VideoDecode({ setBarcode }) {
         scanner.onFrameRead = (results) => {
           for (let result of results) {
             setBarcode(result.barcodeText);
-            console.log(result.barcodeText);
           }
         };
         await scanner.open();
