@@ -3,7 +3,7 @@ import { BarcodeScanner } from "dynamsoft-javascript-barcode";
 
 import "./VideoDecode.css";
 
-export default function VideoDecode({ setBarcode }) {
+export default function VideoDecode({ setBarcode, showScanner }) {
   const elRef = useRef();
 
   useLayoutEffect(() => {
@@ -17,6 +17,7 @@ export default function VideoDecode({ setBarcode }) {
           }
         };
         await scanner.open();
+        window.dispatchEvent(new Event("resize"));
       } catch (ex) {
         let errMsg;
         if (ex.message.includes("network connection error")) {
@@ -28,7 +29,7 @@ export default function VideoDecode({ setBarcode }) {
         alert(errMsg);
       }
     })();
-  }, []);
+  }, [showScanner]);
 
   return (
     <div ref={elRef} className="video-container">
