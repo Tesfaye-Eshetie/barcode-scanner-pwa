@@ -53,7 +53,7 @@ export default function ScannerCard() {
     event.preventDefault();
 
     if (roomID && assetID && tagID) {
-      addTaggedList(assetID, {
+      addTaggedList("01", {
         roomID: roomID,
         assetID: assetID,
         tagID: tagID,
@@ -65,7 +65,7 @@ export default function ScannerCard() {
       setAssetID("");
       setTagID("");
     } else {
-      addTaggedList(assetID, { assetID: assetID, tagID: tagID });
+      addTaggedList("01", { assetID: assetID, tagID: tagID });
       setShowRoomID(false);
       setShowAssetID(false);
       setShowTagID(false);
@@ -84,11 +84,8 @@ export default function ScannerCard() {
   }, [assetID, tagID]);
 
   return (
-    <Card>
-      <Card.Title className="text-capitalize pb-3 fw-bolder text-center mt-4">
-        Dynamsoft Scanner
-      </Card.Title>
-      <Card.Body className="p-4">
+    <Card className="border-0 shadow-none rounded-0" style={{ width: "350px" }}>
+      <Card.Body>
         <Form action="/" noValidate onSubmit={handleSubmit}>
           <ScannerForm
             barcode={roomID}
@@ -112,7 +109,7 @@ export default function ScannerCard() {
             showScanner={showTagID}
             setShowScanner={setShowTagID}
             ID={"Tag-ID"}
-            placeholder={"999 87456317AD"}
+            placeholder={"999 87456317"}
           />
           <Button
             type="submit"

@@ -35,6 +35,11 @@ video {
 table {
   border-collapse: collapse;
 }
+table tr,
+table tr th,
+table tr td {
+  border: none;
+}
 /* revert the 'white-space' property for textarea elements on Safari */
 textarea {
   white-space: revert;

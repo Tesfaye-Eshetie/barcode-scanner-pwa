@@ -49,7 +49,11 @@ export default function ScannerForm({
   return (
     <>
       <Form.Group>
-        <Form.Label>{ID}</Form.Label>
+        <Form.Label
+          style={{ fontWeight: "600", fontSize: "14px", lineHeight: "21px" }}
+        >
+          {ID}
+        </Form.Label>
         <div className="d-flex gap-2 justify-content-center align-items-center my-1">
           <Form.Control
             className="d-flex justify-content-center align-items-center p-2"
