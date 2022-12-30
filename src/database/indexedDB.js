@@ -1,6 +1,6 @@
 import { openDB } from "idb";
 
-export const database = openDB("BarcodeDB", 1, {
+export const database = openDB("BarcodeDB-v1", 1, {
   upgrade(db) {
     db.createObjectStore("taggedList");
     db.createObjectStore("barcode");

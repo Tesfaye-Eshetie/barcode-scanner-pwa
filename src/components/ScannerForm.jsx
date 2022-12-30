@@ -19,12 +19,6 @@ export default function ScannerForm({
     setBarcode(event.target.value);
   };
 
-  const windowReload = () => {
-    setTimeout(() => {
-      window.location.reload(true);
-    }, 200);
-  };
-
   const scanBarcode = () => {
     setShowScanner(true);
   };
@@ -90,7 +84,9 @@ export default function ScannerForm({
           )}
         </div>
       </Form.Group>
-      {showScanner && !barcode ? <VideoDecode setBarcode={setBarcode} /> : null}
+      {showScanner && !barcode ? (
+        <VideoDecode setBarcode={setBarcode} setShowScanner={setShowScanner} />
+      ) : null}
     </>
   );
 }

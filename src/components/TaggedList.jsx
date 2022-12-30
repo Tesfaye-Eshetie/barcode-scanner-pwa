@@ -8,7 +8,7 @@ const TaggedList = () => {
   const [taggedList, setTaggedList] = useState([]);
 
   const getResults = async () => {
-    (await database).getAll("barcode").then((data) => {
+    (await database).getAll("taggedList").then((data) => {
       setTaggedList(data);
     });
   };

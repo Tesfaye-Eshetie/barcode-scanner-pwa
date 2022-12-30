@@ -15,9 +15,8 @@
 }
 .div-ui-container {
   position: fixed;
-  /* width: 178vh; */
+  width: 178vh;
   height: 100vh;
-  animation: linear forwards dce-resize;
   margin: auto;
 }
 .dce-bg-loading {
@@ -55,13 +54,5 @@
   }
   to {
     transform: rotate(1turn);
-  }
-}
-@keyframes dce-resize {
-  from {
-    width: 100vw;
-  }
-  to {
-    width: 178vh;
   }
 }
