@@ -1,12 +1,12 @@
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { BarcodeScanner } from "dynamsoft-javascript-barcode";
 
 import "./VideoDecode.css";
 
-export default function VideoDecode({ setBarcode, showScanner }) {
+export default function VideoDecode({ setBarcode }) {
   const elRef = useRef();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     (async () => {
       try {
         const scanner = await BarcodeScanner.createInstance();
@@ -15,6 +15,7 @@ export default function VideoDecode({ setBarcode, showScanner }) {
           for (let result of results) {
             setBarcode(result.barcodeText);
           }
+          // window.location.reload(false);
         };
         await scanner.open();
         window.dispatchEvent(new Event("resize"));
@@ -29,7 +30,7 @@ export default function VideoDecode({ setBarcode, showScanner }) {
         alert(errMsg);
       }
     })();
-  }, [showScanner]);
+  }, []);
 
   return (
     <div ref={elRef} className="video-container">
