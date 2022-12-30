@@ -4,7 +4,6 @@ const self = this;
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open("static").then((cache) => {
-      console.log("Opened cache");
       return cache.addAll(["/", "index.html", "/manifest.json"]);
     })
   );
