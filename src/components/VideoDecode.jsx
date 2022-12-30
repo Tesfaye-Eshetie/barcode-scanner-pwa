@@ -16,7 +16,10 @@ export default function VideoDecode({ setBarcode, setShowScanner }) {
             setBarcode(result.barcodeText);
             setShowScanner(false);
           }
-          window.location.reload(false);
+          const timer = setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+          return () => clearTimeout(timer);
         };
         await scanner.open();
       } catch (ex) {
