@@ -44,7 +44,7 @@ export default function ScannerForm({
         alert(errMsg);
       }
     })();
-  }, [showScanner]);
+  }, []);
 
   return (
     <>
@@ -89,11 +89,7 @@ export default function ScannerForm({
         </div>
       </Form.Group>
       {showScanner && !barcode ? (
-        <VideoDecode
-          setBarcode={setBarcode}
-          showScanner={showScanner}
-          setShowScanner={setShowScanner}
-        />
+        <VideoDecode setBarcode={setBarcode} setShowScanner={setShowScanner} />
       ) : null}
     </>
   );
