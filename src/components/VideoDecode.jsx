@@ -3,7 +3,11 @@ import { BarcodeScanner } from "dynamsoft-javascript-barcode";
 
 import "./VideoDecode.css";
 
-export default function VideoDecode({ setBarcode, setShowScanner }) {
+export default function VideoDecode({
+  setBarcode,
+  showScanner,
+  setShowScanner,
+}) {
   const elRef = useRef();
 
   useEffect(() => {
@@ -13,13 +17,10 @@ export default function VideoDecode({ setBarcode, setShowScanner }) {
         await scanner.setUIElement(elRef.current);
         scanner.onFrameRead = (results) => {
           for (let result of results) {
+            console.log(result);
             setBarcode(result.barcodeText);
             setShowScanner(false);
           }
-          const timer = setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-          return () => clearTimeout(timer);
         };
         await scanner.open();
       } catch (ex) {
@@ -33,11 +34,17 @@ export default function VideoDecode({ setBarcode, setShowScanner }) {
         alert(errMsg);
       }
     })();
-  }, []);
+  }, [showScanner]);
 
   return (
     <div ref={elRef} className="video-container">
       <div className="div-ui-container">
+        <select class="dce-sel-resolution">
+          <option class="dce-opt-gotResolution" value="got"></option>
+          <option data-width="1280" data-height="720">
+            1280x720
+          </option>
+        </select>
         <svg className="dce-bg-loading" viewBox="0 0 1792 1792">
           <path d="M1760 896q0 176-68.5 336t-184 275.5-275.5 184-336 68.5-336-68.5-275.5-184-184-275.5-68.5-336q0-213 97-398.5t265-305.5 374-151v228q-221 45-366.5 221t-145.5 406q0 130 51 248.5t136.5 204 204 136.5 248.5 51 248.5-51 204-136.5 136.5-204 51-248.5q0-230-145.5-406t-366.5-221v-228q206 31 374 151t265 305.5 97 398.5z"></path>
         </svg>
