@@ -24,9 +24,6 @@ class VideoDecode extends React.Component {
           this.props.setShowScanner(false);
         }
       };
-      scanner.onUniqueRead = (txt, result) => {
-        alert(txt);
-      };
       await scanner.open();
     } catch (ex) {
       let errMsg;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { database, addBarcode, addTaggedList } from "../database/indexedDB";
+import { addTaggedList } from "../database/indexedDB";
 import { BarcodeContext } from "../contexts/BarcodeContext";
 import { ShowScannerContext } from "../contexts/ShowScannerContext";
 import ScannerForm from "./ScannerForm";
@@ -20,34 +20,6 @@ export default function ScannerCard() {
     setShowAssetID,
     setShowTagID,
   } = useContext(ShowScannerContext);
-
-  const holdBarcode = () => {
-    addBarcode("room-ID", { roomID: roomID });
-    addBarcode("asset-ID", { assetID: assetID });
-    addBarcode("tag-ID", { tagID: tagID });
-  };
-
-  useEffect(() => {
-    (async () => {
-      (await database).getAll("barcode").then((data) => {
-        data.map((id) => {
-          if (id.roomID) {
-            setRoomID(id.roomID);
-          }
-          if (id.assetID) {
-            setAssetID(id.assetID);
-          }
-          if (id.tagID) {
-            setTagID(id.tagID);
-          }
-        });
-      });
-    })();
-  }, []);
-
-  useEffect(() => {
-    holdBarcode();
-  }, [roomID, assetID, tagID]);
 
   const handleSubmit = (event) => {
     event.preventDefault();

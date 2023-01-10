@@ -57,3 +57,12 @@
     transform: rotate(1turn);
   }
 }
+@media (orientation: landscape) {
+  .dce-video-container {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+}
