@@ -16,9 +16,9 @@ class VideoDecode extends React.Component {
       const scanner = await (this.pScanner = BarcodeScanner.createInstance());
       let settings = await scanner.getRuntimeSettings();
       settings.region.regionMeasuredByPercentage = 1;
-      settings.region.regionLeft = 40;
+      settings.region.regionLeft = 20;
       settings.region.regionTop = 30;
-      settings.region.regionRight = 60;
+      settings.region.regionRight = 80;
       settings.region.regionBottom = 70;
       // Should judge if scanner is destroyed after 'await' in React 18 'StrictMode'.
       if (scanner.isContextDestroyed()) return;
@@ -74,9 +74,8 @@ class VideoDecode extends React.Component {
               <span>Back</span>{" "}
             </Button>
           </div>
-          <div className="dce-video-container">
-            <div className="div-ui-container-center"></div>
-          </div>
+          <div className="dce-video-container"></div>
+          <div className="div-ui-container-center"></div>
         </div>
       </div>
     );
