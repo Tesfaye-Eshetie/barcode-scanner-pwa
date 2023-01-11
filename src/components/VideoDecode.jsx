@@ -74,10 +74,9 @@ class VideoDecode extends React.Component {
               <span>Back</span>{" "}
             </Button>
           </div>
-          <div className="dce-video-container">
-            <div className="div-ui-container-center"></div>
-          </div>
+          <div className="dce-video-container"></div>
         </div>
+        <div className="div-ui-container-center"></div>
       </div>
     );
   }
