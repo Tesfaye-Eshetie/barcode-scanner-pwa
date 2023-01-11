@@ -63,12 +63,8 @@
   box-shadow: 0px 0px 2vw 1px #173ec9;
   width: 60.2%;
   height: 40.5%;
-  position: absolute;
   margin: auto;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
+  z-index: 10;
 }
 @keyframes dce-rotate {
   from {
