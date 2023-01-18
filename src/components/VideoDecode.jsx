@@ -17,9 +17,9 @@ class VideoDecode extends React.Component {
       let settings = await scanner.getRuntimeSettings();
       settings.region.regionMeasuredByPercentage = 1;
       settings.region.regionLeft = 20;
-      settings.region.regionTop = 30;
+      settings.region.regionTop = 25;
       settings.region.regionRight = 80;
-      settings.region.regionBottom = 70;
+      settings.region.regionBottom = 75;
       // Should judge if scanner is destroyed after 'await' in React 18 'StrictMode'.
       if (scanner.isContextDestroyed()) return;
       await scanner.setUIElement(this.elRef.current);
@@ -76,7 +76,10 @@ class VideoDecode extends React.Component {
           </div>
           <div className="dce-video-container"></div>
         </div>
-        <div className="div-ui-container-center"></div>
+        <div className="div-select-container">
+          <select className="dce-sel-camera"></select>
+          <select className="dce-sel-resolution"></select>
+        </div>
       </div>
     );
   }
