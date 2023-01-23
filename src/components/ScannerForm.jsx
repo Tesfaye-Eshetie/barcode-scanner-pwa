@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 import "../dbr";
 import { BarcodeReader } from "dynamsoft-javascript-barcode";
-import VideoDecode from "./VideoDecode";
+import { VideoDecode } from "./VideoDecode";
 
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import CameraIcon from "/images/camera.png";
+import BackButton from "/images/back-button.png";
 
 export default function ScannerForm({
   barcode,
@@ -89,7 +90,11 @@ export default function ScannerForm({
         </div>
       </Form.Group>
       {showScanner && !barcode ? (
-        <VideoDecode setBarcode={setBarcode} setShowScanner={setShowScanner} />
+        <VideoDecode
+          BackButton={BackButton}
+          setBarcode={setBarcode}
+          setShowScanner={setShowScanner}
+        />
       ) : null}
     </>
   );
