@@ -81,6 +81,7 @@ export function VideoDecode({ setBarcode, setShowScanner }) {
           <Button
             variant="link"
             onClick={() => setTakePicture(true)}
+            id="btn-single-frame-mode"
             className="back-btn d-flex justify-content-center align-items-center"
           >
             <img alt="logo" src={BackButton} width="12" height="24" />
