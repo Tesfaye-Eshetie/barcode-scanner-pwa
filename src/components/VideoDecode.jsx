@@ -1,16 +1,20 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BarcodeScanner } from "dynamsoft-javascript-barcode";
 
 import Button from "react-bootstrap/Button";
+import BackButton from "/images/back-button.png";
 import "./VideoDecode.css";
 
-export function VideoDecode({ BackButton, setBarcode, setShowScanner }) {
+export function VideoDecode({ setBarcode, setShowScanner }) {
+  const [takePicture, setTakePicture] = useState(false);
   const elRef = useRef();
-  let pScanner = null;
+  // let pScanner = null;
   useEffect(() => {
+    let pScanner = null;
     (async () => {
       try {
         const scanner = await (pScanner = BarcodeScanner.createInstance());
+
         let settings = await scanner.getRuntimeSettings();
         settings.region.regionMeasuredByPercentage = 1;
         settings.region.regionLeft = 20;
@@ -22,6 +26,12 @@ export function VideoDecode({ BackButton, setBarcode, setShowScanner }) {
         await scanner.setUIElement(elRef.current);
         // Should judge if scanner is destroyed after 'await' in React 18 'StrictMode'.
         if (scanner.isContextDestroyed()) return;
+        if (takePicture) {
+          console.log(takePicture);
+          await scanner.close();
+          scanner.singleFrameMode = true;
+          await scanner.show();
+        }
         scanner.onFrameRead = (results) => {
           for (let result of results) {
             console.log(result.barcodeText);
@@ -30,6 +40,7 @@ export function VideoDecode({ BackButton, setBarcode, setShowScanner }) {
           }
         };
         await scanner.open();
+
         await scanner.updateRuntimeSettings(settings);
       } catch (ex) {
         let errMsg;
@@ -44,13 +55,13 @@ export function VideoDecode({ BackButton, setBarcode, setShowScanner }) {
       }
     })();
 
-    async () => {
+    return async () => {
       if (pScanner) {
         (await pScanner).destroyContext();
         console.log("BarcodeScanner Component Unmount");
       }
     };
-  }, []);
+  }, [takePicture]);
 
   return (
     <div ref={elRef} className="video-container">
@@ -66,6 +77,14 @@ export function VideoDecode({ BackButton, setBarcode, setShowScanner }) {
           >
             <img alt="logo" src={BackButton} width="12" height="24" />
             <span>Back</span>{" "}
+          </Button>
+          <Button
+            variant="link"
+            onClick={() => setTakePicture(true)}
+            className="back-btn d-flex justify-content-center align-items-center"
+          >
+            <img alt="logo" src={BackButton} width="12" height="24" />
+            <span>click me</span>{" "}
           </Button>
           <div className="div-select-container">
             <select className="dce-sel-camera"></select>
