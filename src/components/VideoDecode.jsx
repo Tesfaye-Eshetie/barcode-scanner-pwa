@@ -14,42 +14,28 @@ export function VideoDecode({ setBarcode, setShowScanner }) {
     (async () => {
       try {
         const scanner = await (pScanner = BarcodeScanner.createInstance());
+        let settings = await scanner.getRuntimeSettings();
+        settings.region.regionMeasuredByPercentage = 1;
+        settings.region.regionLeft = 20;
+        settings.region.regionTop = 25;
+        settings.region.regionRight = 80;
+        settings.region.regionBottom = 75;
+        // Should judge if scanner is destroyed after 'await' in React 18 'StrictMode'.
+        if (scanner.isContextDestroyed()) return;
+        await scanner.setUIElement(elRef.current);
+        // Should judge if scanner is destroyed after 'await' in React 18 'StrictMode'.
+        if (scanner.isContextDestroyed()) return;
+        scanner.onFrameRead = (results) => {
+          for (let result of results) {
+            console.log(result.barcodeText);
+            setBarcode(result.barcodeText);
+            setShowScanner(false);
+          }
+        };
         if (!takePicture) {
-          let settings = await scanner.getRuntimeSettings();
-          settings.region.regionMeasuredByPercentage = 1;
-          settings.region.regionLeft = 20;
-          settings.region.regionTop = 25;
-          settings.region.regionRight = 80;
-          settings.region.regionBottom = 75;
-          // Should judge if scanner is destroyed after 'await' in React 18 'StrictMode'.
-          if (scanner.isContextDestroyed()) return;
-          await scanner.setUIElement(elRef.current);
-          // Should judge if scanner is destroyed after 'await' in React 18 'StrictMode'.
-          if (scanner.isContextDestroyed()) return;
-          scanner.onFrameRead = (results) => {
-            for (let result of results) {
-              console.log(result.barcodeText);
-              setBarcode(result.barcodeText);
-              setShowScanner(false);
-            }
-          };
           await scanner.open();
           await scanner.updateRuntimeSettings(settings);
         } else {
-          // Should judge if scanner is destroyed after 'await' in React 18 'StrictMode'.
-          if (scanner.isContextDestroyed()) return;
-          await scanner.setUIElement(elRef.current);
-          // Should judge if scanner is destroyed after 'await' in React 18 'StrictMode'.
-          if (scanner.isContextDestroyed()) return;
-
-          scanner.onFrameRead = (results) => {
-            for (let result of results) {
-              console.log(result.barcodeText);
-              setBarcode(result.barcodeText);
-              setShowScanner(false);
-            }
-          };
-          await scanner.open();
           await scanner.close();
           scanner.singleFrameMode = true;
           await scanner.show();
