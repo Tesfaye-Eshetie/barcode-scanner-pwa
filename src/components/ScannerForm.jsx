@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import "../dbr";
 import { BarcodeReader } from "dynamsoft-javascript-barcode";
+import { NetworkStatusContext } from "../contexts/NetworkStatusContext";
 import { VideoDecode } from "./VideoDecode";
 
 import Button from "react-bootstrap/Button";
@@ -15,6 +16,8 @@ export default function ScannerForm({
   ID,
   placeholder,
 }) {
+  const isNetworkOnline = useContext(NetworkStatusContext);
+
   const handleChange = (event) => {
     setBarcode(event.target.value);
   };
@@ -73,6 +76,7 @@ export default function ScannerForm({
             </Button>
           ) : (
             <Button
+              disabled={!isNetworkOnline}
               onClick={scanBarcode}
               className="d-flex justify-content-center align-items-center"
             >
