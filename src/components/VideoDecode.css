@@ -15,8 +15,8 @@
 }
 .div-ui-container {
   position: fixed;
-  width: 178vh;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   margin: auto;
 }
 .dce-bg-loading {

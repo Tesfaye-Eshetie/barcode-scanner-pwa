@@ -10,7 +10,9 @@ export function NetworkStatusProvider({ children }) {
   // Notice the appended date param which helps prevent browser caching.
   const checkOnlineStatus = async () => {
     try {
-      const response = await fetch(`/barcode-scanner-pwa/favicon.ico?d=${Date.now()}`);
+      const response = await fetch(
+        `/barcode-scanner-pwa/favicon.ico?d=${Date.now()}`
+      );
       if (!response.ok) throw new Error("Network response was not ok");
       // At this point we can safely assume the user has connection to the internet
       console.log("Internet connection available");
