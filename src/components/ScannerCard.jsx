@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { addTaggedList } from "../database/indexedDB";
 import { BarcodeContext } from "../contexts/BarcodeContext";
-import { ShowScannerContext } from "../contexts/ShowScannerContext";
 import ScannerForm from "./ScannerForm";
 
 import Button from "react-bootstrap/Button";
@@ -12,14 +11,6 @@ export default function ScannerCard() {
   const [disableButton, setDisableButton] = useState(true);
   const { roomID, assetID, tagID, setRoomID, setAssetID, setTagID } =
     useContext(BarcodeContext);
-  const {
-    showRoomID,
-    showAssetID,
-    showTagID,
-    setShowRoomID,
-    setShowAssetID,
-    setShowTagID,
-  } = useContext(ShowScannerContext);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -30,20 +21,32 @@ export default function ScannerCard() {
         assetID: assetID,
         tagID: tagID,
       });
-      setShowRoomID(false);
-      setShowAssetID(false);
-      setShowTagID(false);
-      setRoomID("");
-      setAssetID("");
-      setTagID("");
+      setRoomID({
+        barcodeValue: "",
+        showScanner: false,
+      });
+      setAssetID({
+        barcodeValue: "",
+        showScanner: false,
+      });
+      setTagID({
+        barcodeValue: "",
+        showScanner: false,
+      });
     } else {
       addTaggedList("01", { assetID: assetID, tagID: tagID });
-      setShowRoomID(false);
-      setShowAssetID(false);
-      setShowTagID(false);
-      setRoomID("");
-      setAssetID("");
-      setTagID("");
+      setRoomID({
+        barcodeValue: "",
+        showScanner: false,
+      });
+      setAssetID({
+        barcodeValue: "",
+        showScanner: false,
+      });
+      setTagID({
+        barcodeValue: "",
+        showScanner: false,
+      });
     }
   };
 
@@ -62,24 +65,18 @@ export default function ScannerCard() {
           <ScannerForm
             barcode={roomID}
             setBarcode={setRoomID}
-            showScanner={showRoomID}
-            setShowScanner={setShowRoomID}
             ID={"Room-ID"}
             placeholder={"4302 (Option)"}
           />
           <ScannerForm
             barcode={assetID}
             setBarcode={setAssetID}
-            showScanner={showAssetID}
-            setShowScanner={setShowAssetID}
             ID={"Asset-ID"}
             placeholder={"999 87456317AD"}
           />
           <ScannerForm
             barcode={tagID}
             setBarcode={setTagID}
-            showScanner={showTagID}
-            setShowScanner={setShowTagID}
             ID={"Tag-ID"}
             placeholder={"999 87456317"}
           />

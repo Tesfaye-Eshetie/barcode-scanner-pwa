@@ -2,20 +2,13 @@ import { useEffect, useContext } from "react";
 import "../dbr";
 import { BarcodeReader } from "dynamsoft-javascript-barcode";
 import { NetworkStatusContext } from "../contexts/NetworkStatusContext";
-import { VideoDecode } from "./VideoDecode";
+import VideoDecode from "./VideoDecode";
 
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import CameraIcon from "/images/camera.png";
 
-export default function ScannerForm({
-  barcode,
-  setBarcode,
-  showScanner,
-  setShowScanner,
-  ID,
-  placeholder,
-}) {
+export default function ScannerForm({ barcode, setBarcode, ID, placeholder }) {
   const isNetworkOnline = useContext(NetworkStatusContext);
 
   const handleChange = (event) => {
@@ -23,12 +16,17 @@ export default function ScannerForm({
   };
 
   const scanBarcode = () => {
-    setShowScanner(true);
+    setBarcode({
+      barcodeValue: "",
+      showScanner: true,
+    });
   };
 
   const removeTag = () => {
-    setBarcode("");
-    setShowScanner(false);
+    setBarcode({
+      barcodeValue: "",
+      showScanner: false,
+    });
   };
 
   useEffect(() => {
@@ -61,12 +59,12 @@ export default function ScannerForm({
           <Form.Control
             className="d-flex justify-content-center align-items-center p-2"
             type="text"
-            value={barcode}
+            value={barcode.barcodeValue}
             onChange={handleChange}
             placeholder={placeholder}
             required
           />
-          {barcode ? (
+          {barcode.barcodeValue ? (
             <Button
               onClick={removeTag}
               variant="danger"
@@ -92,8 +90,8 @@ export default function ScannerForm({
           )}
         </div>
       </Form.Group>
-      {showScanner && !barcode ? (
-        <VideoDecode setBarcode={setBarcode} setShowScanner={setShowScanner} />
+      {barcode.showScanner ? (
+        <VideoDecode barcode={barcode} setBarcode={setBarcode} />
       ) : null}
     </>
   );
