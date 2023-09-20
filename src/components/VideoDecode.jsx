@@ -74,9 +74,6 @@ export default function VideoDecode({ barcode, setBarcode }) {
         // eslint-disable-next-line no-restricted-syntax
         for (const result of results) {
           setBarcode({
-            keyDownValue: "",
-            focusNextInput: false,
-            inputValue: result.barcodeText,
             barcodeValue: result.barcodeText,
             showScanner: false,
           });
@@ -140,27 +137,30 @@ export default function VideoDecode({ barcode, setBarcode }) {
           if (!maxHeight || !maxWidth) {
             const capabilities = scanner.getCapabilities();
 
-            const newMaxHeight = capabilities?.height?.max || 1080;
-            const newMaxWidth = capabilities?.width?.max || 1920;
+            const newMaxHeight = capabilities?.height?.max;
+            const newMaxWidth = capabilities?.width?.max;
+            if (newMaxHeight && newMaxWidth) {
+              await scanner.setResolution(newMaxWidth, newMaxHeight);
 
-            setCameraSettingValues((prev) => ({
-              ...prev,
-              resolutionCapability: {
-                maxHeight: newMaxHeight,
-                maxWidth: newMaxWidth,
-              },
-            }));
-
-            localStorage.setItem(
-              `settingValues`,
-              JSON.stringify({
-                ...cameraSettingValues,
+              setCameraSettingValues((prev) => ({
+                ...prev,
                 resolutionCapability: {
                   maxHeight: newMaxHeight,
                   maxWidth: newMaxWidth,
                 },
-              })
-            );
+              }));
+
+              localStorage.setItem(
+                `settingValues`,
+                JSON.stringify({
+                  ...cameraSettingValues,
+                  resolutionCapability: {
+                    maxHeight: newMaxHeight,
+                    maxWidth: newMaxWidth,
+                  },
+                })
+              );
+            }
           }
 
           const [width, height] = scanner.getResolution();
@@ -260,9 +260,6 @@ export default function VideoDecode({ barcode, setBarcode }) {
               aria-label="navigate-back"
               onClick={() =>
                 setBarcode({
-                  keyDownValue: "",
-                  focusNextInput: false,
-                  inputValue: "",
                   barcodeValue: "",
                   showScanner: false,
                 })
