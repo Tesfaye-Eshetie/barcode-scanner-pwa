@@ -37,12 +37,12 @@ export default function VideoDecode({ barcode, setBarcode }) {
   const [isTorchOn, setIsTorchOn] = useState(false);
   const [isTakePicture, setIsTakePicture] = useState(false);
   const [displaySettingPopup, setDisplaySettingPopup] = useState(false);
-  const [cameraWidth, setCameraWidth] = useState("134vh");
-  const [updateCamera, setUpdateCamera] = useState(false);
+  const [cameraWidth, setCameraWidth] = useState("178vh");
 
   const [cameraSettingValues, setCameraSettingValues] = useState(
     getSettingValues()
   );
+  const [settingValues, setSettingValues] = useState(cameraSettingValues);
   const {
     isTorchSupported,
     autoFocus,
@@ -59,11 +59,30 @@ export default function VideoDecode({ barcode, setBarcode }) {
 
   const elRef = useRef();
 
-  let pScanner = null;
+  const pScanner = useRef(null);
 
   const readBarcode = async () => {
     try {
-      const scanner = await (pScanner = BarcodeScanner.createInstance());
+      const scanner = await (pScanner.current =
+        BarcodeScanner.createInstance());
+      const { OS, browser } = await BarcodeReader.detectEnvironment();
+      if (!isTorchSupported) {
+        const isSupportedBrowser =
+          (OS === "Windows" && (browser === "Chrome" || browser === "Edge")) ||
+          (OS === "Android" && (browser === "Chrome" || browser === "Edge"));
+        setCameraSettingValues((prev) => ({
+          ...prev,
+          isTorchSupported: `${isSupportedBrowser}`,
+        }));
+        localStorage.setItem(
+          `settingValues`,
+          JSON.stringify({
+            ...cameraSettingValues,
+            isTorchSupported: `${isSupportedBrowser}`,
+          })
+        );
+      }
+
       // Should judge if scanner is destroyed after 'await' in React 18 'StrictMode'.
       if (scanner.isContextDestroyed()) return;
 
@@ -86,124 +105,101 @@ export default function VideoDecode({ barcode, setBarcode }) {
         scanner.singleFrameMode = true;
         await scanner.show();
       } else {
-        try {
-          const { OS, browser } = await BarcodeReader.detectEnvironment();
-          if (!isTorchSupported) {
-            const isSupportedBrowser =
-              (OS === "Windows" &&
-                (browser === "Chrome" || browser === "Edge")) ||
-              (OS === "Android" &&
-                (browser === "Chrome" || browser === "Edge"));
+        // Set runtime settings
+        const runtimeSettings = await scanner.getRuntimeSettings();
+        runtimeSettings.region = {
+          regionMeasuredByPercentage: 1,
+          regionLeft: 20,
+          regionTop: 38,
+          regionRight: 80,
+          regionBottom: 62,
+        };
+        runtimeSettings.furtherModes.grayscaleTransformationModes =
+          grayscaleTransformationModes;
+
+        // Set scan settings
+        const scanSettings = await scanner.getScanSettings();
+        scanSettings.intervalTime = 100;
+        scanSettings.autoFocus = autoFocus;
+        scanSettings.autoZoom = autoZoom;
+        scanSettings.autoSuggestTip = true;
+        scanSettings.whenToVibrateforSuccessfulRead = vibrate;
+        scanSettings.whenToPlaySoundforSuccessfulRead = sound;
+        scanSettings.duplicateForgetTime = 3000;
+
+        scanner.ifSaveLastUsedCamera = true;
+        await scanner.updateRuntimeSettings(scanMode);
+        await scanner.updateRuntimeSettings(runtimeSettings);
+        await scanner.updateScanSettings(scanSettings);
+
+        if (maxHeight && maxWidth) {
+          await scanner.setResolution(maxWidth, maxHeight);
+        }
+        await scanner.open();
+
+        if (!maxHeight || !maxWidth) {
+          const capabilities = scanner.getCapabilities();
+
+          const newMaxHeight = capabilities?.height?.max;
+          const newMaxWidth = capabilities?.width?.max;
+          if (newMaxHeight && newMaxWidth) {
+            await scanner.setResolution(newMaxWidth, newMaxHeight);
+
             setCameraSettingValues((prev) => ({
               ...prev,
-              isTorchSupported: `${isSupportedBrowser}`,
+              resolutionCapability: {
+                maxHeight: newMaxHeight,
+                maxWidth: newMaxWidth,
+              },
             }));
+
             localStorage.setItem(
               `settingValues`,
               JSON.stringify({
                 ...cameraSettingValues,
-                isTorchSupported: `${isSupportedBrowser}`,
-              })
-            );
-          }
-
-          // Set runtime settings
-          const runtimeSettings = await scanner.getRuntimeSettings();
-          runtimeSettings.region = {
-            regionMeasuredByPercentage: 1,
-            regionLeft: 20,
-            regionTop: 38,
-            regionRight: 80,
-            regionBottom: 62,
-          };
-          runtimeSettings.furtherModes.grayscaleTransformationModes =
-            grayscaleTransformationModes;
-
-          // Set scan settings
-          const scanSettings = await scanner.getScanSettings();
-          scanSettings.intervalTime = 100;
-          scanSettings.autoFocus = autoFocus;
-          scanSettings.autoZoom = autoZoom;
-          scanSettings.autoSuggestTip = true;
-          scanSettings.whenToVibrateforSuccessfulRead = vibrate;
-          scanSettings.whenToPlaySoundforSuccessfulRead = sound;
-          scanSettings.duplicateForgetTime = 3000;
-
-          scanner.ifSaveLastUsedCamera = true;
-          await scanner.updateRuntimeSettings(scanMode);
-          await scanner.updateRuntimeSettings(runtimeSettings);
-          await scanner.updateScanSettings(scanSettings);
-
-          if (maxHeight && maxWidth) {
-            await scanner.setResolution(maxWidth, maxHeight);
-          }
-          await scanner.open();
-
-          if (!maxHeight || !maxWidth) {
-            const capabilities = scanner.getCapabilities();
-
-            const newMaxHeight = capabilities?.height?.max;
-            const newMaxWidth = capabilities?.width?.max;
-            if (newMaxHeight && newMaxWidth) {
-              await scanner.setResolution(newMaxWidth, newMaxHeight);
-
-              setCameraSettingValues((prev) => ({
-                ...prev,
                 resolutionCapability: {
                   maxHeight: newMaxHeight,
                   maxWidth: newMaxWidth,
                 },
-              }));
-
-              localStorage.setItem(
-                `settingValues`,
-                JSON.stringify({
-                  ...cameraSettingValues,
-                  resolutionCapability: {
-                    maxHeight: newMaxHeight,
-                    maxWidth: newMaxWidth,
-                  },
-                })
-              );
-            }
+              })
+            );
           }
+        }
 
-          const [width, height] = scanner.getResolution();
-          setCameraWidth(`${Math.ceil((width * 100) / height)}vh`);
+        const [width, height] = scanner.getResolution();
+        setCameraWidth(`${Math.ceil((width * 100) / height)}vh`);
 
-          await scanner.setZoom(zoomFactor);
-          if (browser === "Chrome" || browser === "Edge") {
-            await scanner.enableTapToFocus();
+        await scanner.setZoom(zoomFactor);
+        if (browser === "Chrome" || browser === "Edge") {
+          await scanner.enableTapToFocus();
+        }
+        if (isTorchSupported === "true") {
+          if (isTorchOn) {
+            await scanner.turnOnTorch();
+          } else {
+            await scanner.turnOffTorch();
           }
-          if (isTorchSupported === "true") {
-            if (isTorchOn) {
-              await scanner.turnOnTorch();
-            } else {
-              await scanner.turnOffTorch();
-            }
-          }
-        } catch (err) {
-          console.log(err);
         }
       }
     } catch (err) {
-      alert(err);
       console.log(err);
     }
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setUpdateCamera(!updateCamera);
-    }, 1000);
+    readBarcode();
 
     return () => {
-      clearTimeout(timer);
+      (async () => {
+        setCameraWidth("178vh");
+        if (pScanner.current) {
+          (await pScanner.current).destroyContext();
+        }
+      })();
     };
   }, [
     isTorchOn,
     isTakePicture,
-    isTorchSupported,
     autoFocus,
     autoZoom,
     zoomFactor,
@@ -214,19 +210,6 @@ export default function VideoDecode({ barcode, setBarcode }) {
     maxWidth,
     firstGrayscaleTransformationMode,
   ]);
-  useEffect(() => {
-    readBarcode();
-
-    return () => {
-      const clear = async () => {
-        const scanner = await pScanner;
-        if (scanner) {
-          scanner.destroyContext();
-        }
-      };
-      clear();
-    };
-  }, [updateCamera]);
 
   const handleSliderChange = useCallback((value) => {
     setCameraSettingValues((prev) => ({
@@ -242,24 +225,28 @@ export default function VideoDecode({ barcode, setBarcode }) {
     );
   }, []);
 
-  const handleChange = (event) => {
+  const handleResolutionChange = (event) => {
     const selectedResolutionString = event.target.value;
     const [width, height] = selectedResolutionString.split("x").map(Number);
     setCameraWidth(`${Math.ceil((width * 100) / height)}vh`);
   };
-
+  const handleCameraSettingChange = () => {
+    setCameraSettingValues(settingValues);
+    localStorage.setItem(`settingValues`, JSON.stringify(settingValues));
+    setDisplaySettingPopup(false);
+  };
   return barcode.showScanner ? (
     <div
       ref={elRef}
       role="button"
       aria-hidden="true"
       className="video-container d-flex flex-column justify-content-center align-items-center"
-      onClick={() => setDisplaySettingPopup(false)}
+      onClick={handleCameraSettingChange}
     >
       {displaySettingPopup ? (
         <SettingPopup
-          cameraSettingValues={cameraSettingValues}
-          setCameraSettingValues={setCameraSettingValues}
+          settingValues={settingValues}
+          setSettingValues={setSettingValues}
         />
       ) : null}
       <div
@@ -333,7 +320,10 @@ export default function VideoDecode({ barcode, setBarcode }) {
           </div>
           <div className="div-select-container d-flex flex-column align-items-end">
             <select className="dce-sel-camera" />
-            <select className="dce-sel-resolution" onChange={handleChange}>
+            <select
+              className="dce-sel-resolution"
+              onChange={handleResolutionChange}
+            >
               <option className="dce-opt-gotResolution" value="got" />
               {maxWidth &&
               maxHeight &&
@@ -355,7 +345,7 @@ export default function VideoDecode({ barcode, setBarcode }) {
               </option>
             </select>
           </div>{" "}
-          {!autoZoom ? (
+          {!autoZoom || isTakePicture ? (
             <div className="zoom-slider-wrapper d-flex justify-content-center align-items-center">
               <div className="zoom-slider d-flex justify-content-center align-items-center">
                 <Slider

@@ -7,21 +7,14 @@ import {
   Vibrate,
 } from "phosphor-react";
 
-export default function SettingPopup({
-  cameraSettingValues,
-  setCameraSettingValues,
-}) {
+export default function SettingPopup({ settingValues, setSettingValues }) {
   const handleSettingChange = (key, value) => {
-    setCameraSettingValues((prev) => ({
+    setSettingValues((prev) => ({
       ...prev,
       [key]: value,
     }));
-    const updatedValues = {
-      ...cameraSettingValues,
-      [key]: value,
-    };
-    localStorage.setItem(`settingValues`, JSON.stringify(updatedValues));
   };
+
   return (
     <div
       role="button"
@@ -30,9 +23,11 @@ export default function SettingPopup({
       onClick={(event) => event.stopPropagation()}
     >
       <div className="settings-card d-flex flex-column justify-content-center align-items-center">
-        <h1 className="d-flex justify-content-center align-items-center">
-          Scan Settings
-        </h1>
+        <div className="settings-title-wrapper d-flex justify-content-center align-items-center">
+          <h1 className="settings-title d-flex justify-content-center align-items-center">
+            Scan Settings
+          </h1>
+        </div>
         <div className="settings-content-wrapper d-flex flex-column justify-content-center gap-3">
           <p>Scan Mode</p>
           <div className="settings-mode-wrapper d-flex justify-content-between align-items-center gap-2">
@@ -40,7 +35,7 @@ export default function SettingPopup({
               type="button"
               onClick={() => handleSettingChange("scanMode", "speed")}
               className={`settings-btn ${
-                cameraSettingValues.scanMode === "speed"
+                settingValues.scanMode === "speed"
                   ? "settings-yellow-btn"
                   : null
               }`}
@@ -51,7 +46,7 @@ export default function SettingPopup({
               type="button"
               onClick={() => handleSettingChange("scanMode", "balance")}
               className={`settings-btn ${
-                cameraSettingValues.scanMode === "balance"
+                settingValues.scanMode === "balance"
                   ? "settings-yellow-btn"
                   : null
               }`}
@@ -62,7 +57,7 @@ export default function SettingPopup({
               type="button"
               onClick={() => handleSettingChange("scanMode", "coverage")}
               className={`settings-btn ${
-                cameraSettingValues?.scanMode === "coverage"
+                settingValues?.scanMode === "coverage"
                   ? "settings-yellow-btn"
                   : null
               }`}
@@ -83,7 +78,7 @@ export default function SettingPopup({
                 )
               }
               className={`color-option-btn d-flex align-items-center ${
-                cameraSettingValues?.grayscaleTransformationModes[0] === 2
+                settingValues?.grayscaleTransformationModes[0] === 2
                   ? "settings-yellow-btn"
                   : null
               }`}
@@ -102,7 +97,7 @@ export default function SettingPopup({
                 )
               }
               className={`color-option-btn d-flex align-items-center ${
-                cameraSettingValues?.grayscaleTransformationModes[0] === 1
+                settingValues?.grayscaleTransformationModes[0] === 1
                   ? "settings-yellow-btn"
                   : null
               }`}
@@ -120,12 +115,12 @@ export default function SettingPopup({
             type="button"
             onClick={() => {
               const vibrateValue =
-                cameraSettingValues?.vibrate === "unique" ? "never" : "unique";
+                settingValues?.vibrate === "unique" ? "never" : "unique";
               handleSettingChange("vibrate", vibrateValue);
             }}
             className="vibrate"
           >
-            {cameraSettingValues?.vibrate === "unique" ? (
+            {settingValues?.vibrate === "unique" ? (
               <Vibrate size={36} className="vibration-on" />
             ) : (
               <SelectionSlash size={36} className="vibration-off" />
@@ -138,12 +133,12 @@ export default function SettingPopup({
             type="button"
             onClick={() => {
               const soundValue =
-                cameraSettingValues?.sound === "unique" ? "never" : "unique";
+                settingValues?.sound === "unique" ? "never" : "unique";
               handleSettingChange("sound", soundValue);
             }}
             className="scan-sound"
           >
-            {cameraSettingValues?.sound === "unique" ? (
+            {settingValues?.sound === "unique" ? (
               <SpeakerSimpleHigh
                 size={36}
                 weight="bold"
@@ -164,13 +159,10 @@ export default function SettingPopup({
             <button
               type="button"
               onClick={() =>
-                handleSettingChange(
-                  "autoFocus",
-                  !cameraSettingValues?.autoFocus
-                )
+                handleSettingChange("autoFocus", !settingValues?.autoFocus)
               }
               className={`off-on-animation ${
-                cameraSettingValues?.autoFocus ? "auto-on" : "auto-off"
+                settingValues?.autoFocus ? "auto-on" : "auto-off"
               }`}
             >
               <span />
@@ -181,10 +173,10 @@ export default function SettingPopup({
             <button
               type="button"
               onClick={() =>
-                handleSettingChange("autoZoom", !cameraSettingValues?.autoZoom)
+                handleSettingChange("autoZoom", !settingValues?.autoZoom)
               }
               className={`off-on-animation ${
-                cameraSettingValues?.autoZoom ? "auto-on" : "auto-off"
+                settingValues?.autoZoom ? "auto-on" : "auto-off"
               }`}
             >
               <span />
