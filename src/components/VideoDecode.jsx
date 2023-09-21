@@ -15,7 +15,7 @@ import SettingPopup from "./SettingPopup";
 import "./VideoDecode.css";
 
 const defaultSettingsValues = {
-  isTorchSupported: false,
+  isTorchSupported: "",
   autoFocus: true,
   autoZoom: false,
   zoomFactor: 1,
@@ -38,6 +38,7 @@ export default function VideoDecode({ barcode, setBarcode }) {
   const [isTakePicture, setIsTakePicture] = useState(false);
   const [displaySettingPopup, setDisplaySettingPopup] = useState(false);
   const [cameraWidth, setCameraWidth] = useState("134vh");
+  const [updateCamera, setUpdateCamera] = useState(false);
 
   const [cameraSettingValues, setCameraSettingValues] = useState(
     getSettingValues()
@@ -59,6 +60,7 @@ export default function VideoDecode({ barcode, setBarcode }) {
   const elRef = useRef();
 
   let pScanner = null;
+
   const readBarcode = async () => {
     try {
       const scanner = await (pScanner = BarcodeScanner.createInstance());
@@ -86,24 +88,27 @@ export default function VideoDecode({ barcode, setBarcode }) {
       } else {
         try {
           const { OS, browser } = await BarcodeReader.detectEnvironment();
-          const isSupportedBrowser =
-            (OS === "Windows" &&
-              (browser === "Chrome" || browser === "Edge")) ||
-            (OS === "Android" && (browser === "Chrome" || browser === "Edge"));
-          setCameraSettingValues((prev) => ({
-            ...prev,
-            isTorchSupported: isSupportedBrowser,
-          }));
-          localStorage.setItem(
-            `settingValues`,
-            JSON.stringify({
-              ...cameraSettingValues,
-              isTorchSupported: isSupportedBrowser,
-            })
-          );
+          if (!isTorchSupported) {
+            const isSupportedBrowser =
+              (OS === "Windows" &&
+                (browser === "Chrome" || browser === "Edge")) ||
+              (OS === "Android" &&
+                (browser === "Chrome" || browser === "Edge"));
+            setCameraSettingValues((prev) => ({
+              ...prev,
+              isTorchSupported: `${isSupportedBrowser}`,
+            }));
+            localStorage.setItem(
+              `settingValues`,
+              JSON.stringify({
+                ...cameraSettingValues,
+                isTorchSupported: `${isSupportedBrowser}`,
+              })
+            );
+          }
 
           // Set runtime settings
-          const runtimeSettings = await scanner?.getRuntimeSettings();
+          const runtimeSettings = await scanner.getRuntimeSettings();
           runtimeSettings.region = {
             regionMeasuredByPercentage: 1,
             regionLeft: 20,
@@ -124,14 +129,14 @@ export default function VideoDecode({ barcode, setBarcode }) {
           scanSettings.whenToPlaySoundforSuccessfulRead = sound;
           scanSettings.duplicateForgetTime = 3000;
 
-          if (maxHeight && maxWidth) {
-            await scanner.setResolution(maxWidth, maxHeight);
-          }
-
           scanner.ifSaveLastUsedCamera = true;
           await scanner.updateRuntimeSettings(scanMode);
           await scanner.updateRuntimeSettings(runtimeSettings);
           await scanner.updateScanSettings(scanSettings);
+
+          if (maxHeight && maxWidth) {
+            await scanner.setResolution(maxWidth, maxHeight);
+          }
           await scanner.open();
 
           if (!maxHeight || !maxWidth) {
@@ -167,8 +172,10 @@ export default function VideoDecode({ barcode, setBarcode }) {
           setCameraWidth(`${Math.ceil((width * 100) / height)}vh`);
 
           await scanner.setZoom(zoomFactor);
-          await scanner.enableTapToFocus();
-          if (isTorchSupported) {
+          if (browser === "Chrome" || browser === "Edge") {
+            await scanner.enableTapToFocus();
+          }
+          if (isTorchSupported === "true") {
             if (isTorchOn) {
               await scanner.turnOnTorch();
             } else {
@@ -186,16 +193,12 @@ export default function VideoDecode({ barcode, setBarcode }) {
   };
 
   useEffect(() => {
-    readBarcode();
+    const timer = setTimeout(() => {
+      setUpdateCamera(!updateCamera);
+    }, 1000);
 
     return () => {
-      const clear = async () => {
-        const scanner = await pScanner;
-        if (scanner) {
-          scanner.destroyContext();
-        }
-      };
-      clear();
+      clearTimeout(timer);
     };
   }, [
     isTorchOn,
@@ -211,6 +214,19 @@ export default function VideoDecode({ barcode, setBarcode }) {
     maxWidth,
     firstGrayscaleTransformationMode,
   ]);
+  useEffect(() => {
+    readBarcode();
+
+    return () => {
+      const clear = async () => {
+        const scanner = await pScanner;
+        if (scanner) {
+          scanner.destroyContext();
+        }
+      };
+      clear();
+    };
+  }, [updateCamera]);
 
   const handleSliderChange = useCallback((value) => {
     setCameraSettingValues((prev) => ({
@@ -302,7 +318,7 @@ export default function VideoDecode({ barcode, setBarcode }) {
             >
               <Gear size={28} weight="bold" />
             </button>
-            {isTorchSupported ? (
+            {isTorchSupported === "true" ? (
               <button
                 type="button"
                 aria-label="turn on or off torch"
