@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { BarcodeReader, BarcodeScanner } from "dynamsoft-javascript-barcode";
@@ -63,8 +63,34 @@ export default function VideoDecode({ barcode, setBarcode }) {
     grayscaleTransformationModes,
   });
 
-  const elRef = useRef();
+  const handleSliderChange = (value) => {
+    setCameraSettingValues((prev) => ({
+      ...prev,
+      zoomFactor: value,
+    }));
+    localStorage.setItem(
+      `settingValues`,
+      JSON.stringify({
+        ...cameraSettingValues,
+        zoomFactor: value,
+      })
+    );
+  };
 
+  const handleCameraSettingChange = () => {
+    setCameraSettingValues((prev) => ({
+      ...prev,
+      ...settingValues,
+    }));
+    const updatedValues = {
+      ...cameraSettingValues,
+      ...settingValues,
+    };
+    localStorage.setItem(`settingValues`, JSON.stringify(updatedValues));
+    setDisplaySettingPopup(false);
+  };
+
+  const elRef = useRef();
   const pScanner = useRef(null);
 
   const readBarcode = async () => {
@@ -218,33 +244,6 @@ export default function VideoDecode({ barcode, setBarcode }) {
     maxWidth,
     firstGrayscaleTransformationMode,
   ]);
-
-  const handleSliderChange = useCallback((value) => {
-    setCameraSettingValues((prev) => ({
-      ...prev,
-      zoomFactor: value,
-    }));
-    localStorage.setItem(
-      `settingValues`,
-      JSON.stringify({
-        ...cameraSettingValues,
-        zoomFactor: value,
-      })
-    );
-  }, []);
-
-  const handleCameraSettingChange = () => {
-    setCameraSettingValues((prev) => ({
-      ...prev,
-      ...settingValues,
-    }));
-    const updatedValues = {
-      ...cameraSettingValues,
-      ...settingValues,
-    };
-    localStorage.setItem(`settingValues`, JSON.stringify(updatedValues));
-    setDisplaySettingPopup(false);
-  };
 
   return barcode.showScanner ? (
     <div
