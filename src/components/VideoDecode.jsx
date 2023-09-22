@@ -15,25 +15,34 @@ import SettingPopup from "./SettingPopup";
 import "./VideoDecode.css";
 
 const defaultSettingsValues = {
-  isTorchSupported: "",
   autoFocus: true,
   autoZoom: false,
-  zoomFactor: 1,
   vibrate: "unique",
   sound: "unique",
   scanMode: "balance",
   grayscaleTransformationModes: [2, 0, 0, 0, 0, 0, 0, 0],
-  resolutionCapability: {
-    maxHeight: 0,
-    maxWidth: 0,
-  },
+};
+const defaultResolutionCapability = {
+  maxHeight: 0,
+  maxWidth: 0,
 };
 const getSettingValues = () => {
   const SettingValues = localStorage.getItem(`settingValues`);
   return SettingValues ? JSON.parse(SettingValues) : defaultSettingsValues;
 };
+const getResolutionCapability = () => {
+  const resolutionCapability = localStorage.getItem(`resolutionCapability`);
+  return resolutionCapability
+    ? JSON.parse(resolutionCapability)
+    : defaultResolutionCapability;
+};
+const getZoomFactor = () => {
+  const ZoomFactor = localStorage.getItem(`zoomFactor`);
+  return ZoomFactor ? JSON.parse(ZoomFactor).zoomFactor : 1;
+};
 
 export default function VideoDecode({ barcode, setBarcode }) {
+  const [isBrowserSupportTorch, setIsBrowserSupportTorch] = useState(false);
   const [isTorchOn, setIsTorchOn] = useState(false);
   const [isTakePicture, setIsTakePicture] = useState(false);
   const [displaySettingPopup, setDisplaySettingPopup] = useState(false);
@@ -41,16 +50,19 @@ export default function VideoDecode({ barcode, setBarcode }) {
   const [cameraSettingValues, setCameraSettingValues] = useState(
     getSettingValues()
   );
+  const [resolutionCapability, setResolutionCapability] = useState(
+    getResolutionCapability()
+  );
+  const [zoomFactor, setZoomFactor] = useState(getZoomFactor());
+  const [debouncedZoomFactor, setDebouncedZoomFactor] = useState(zoomFactor);
+
   const {
-    isTorchSupported,
     autoFocus,
     autoZoom,
-    zoomFactor,
     grayscaleTransformationModes,
     scanMode,
     sound,
     vibrate,
-    resolutionCapability,
   } = cameraSettingValues;
   const { maxHeight, maxWidth } = resolutionCapability;
   const firstGrayscaleTransformationMode = grayscaleTransformationModes[0];
@@ -64,29 +76,25 @@ export default function VideoDecode({ barcode, setBarcode }) {
   });
 
   const handleSliderChange = (value) => {
-    setCameraSettingValues((prev) => ({
-      ...prev,
-      zoomFactor: value,
-    }));
-    localStorage.setItem(
-      `settingValues`,
-      JSON.stringify({
-        ...cameraSettingValues,
-        zoomFactor: value,
-      })
-    );
+    setZoomFactor(value);
+    // Update the debouncedZoomFactor after a delay
+    clearTimeout(debouncedZoomFactor);
+    setDebouncedZoomFactor(value);
+    setTimeout(() => {
+      localStorage.setItem(
+        `zoomFactor`,
+        JSON.stringify({
+          zoomFactor: value,
+        })
+      );
+    }, 500);
   };
 
   const handleCameraSettingChange = () => {
-    setCameraSettingValues((prev) => ({
-      ...prev,
+    setCameraSettingValues({
       ...settingValues,
-    }));
-    const updatedValues = {
-      ...cameraSettingValues,
-      ...settingValues,
-    };
-    localStorage.setItem(`settingValues`, JSON.stringify(updatedValues));
+    });
+    localStorage.setItem(`settingValues`, JSON.stringify({ ...settingValues }));
     setDisplaySettingPopup(false);
   };
 
@@ -124,21 +132,11 @@ export default function VideoDecode({ barcode, setBarcode }) {
       } else {
         try {
           const { OS, browser } = await BarcodeReader.detectEnvironment();
-          const isSupportedBrowser =
+          const isTorchSupported =
             (OS === "Windows" &&
               (browser === "Chrome" || browser === "Edge")) ||
             (OS === "Android" && (browser === "Chrome" || browser === "Edge"));
-          setCameraSettingValues((prev) => ({
-            ...prev,
-            isTorchSupported: `${isSupportedBrowser}`,
-          }));
-          localStorage.setItem(
-            `settingValues`,
-            JSON.stringify({
-              ...cameraSettingValues,
-              isTorchSupported: `${isSupportedBrowser}`,
-            })
-          );
+          setIsBrowserSupportTorch(isTorchSupported);
 
           // Set runtime settings
           const runtimeSettings = await scanner?.getRuntimeSettings();
@@ -180,22 +178,16 @@ export default function VideoDecode({ barcode, setBarcode }) {
             if (newMaxHeight && newMaxWidth) {
               await scanner.setResolution(newMaxWidth, newMaxHeight);
 
-              setCameraSettingValues((prev) => ({
-                ...prev,
-                resolutionCapability: {
-                  maxHeight: newMaxHeight,
-                  maxWidth: newMaxWidth,
-                },
-              }));
+              setResolutionCapability({
+                maxHeight: newMaxHeight,
+                maxWidth: newMaxWidth,
+              });
 
               localStorage.setItem(
-                `settingValues`,
+                `resolutionCapability`,
                 JSON.stringify({
-                  ...cameraSettingValues,
-                  resolutionCapability: {
-                    maxHeight: newMaxHeight,
-                    maxWidth: newMaxWidth,
-                  },
+                  maxHeight: newMaxHeight,
+                  maxWidth: newMaxWidth,
                 })
               );
             }
@@ -205,7 +197,7 @@ export default function VideoDecode({ barcode, setBarcode }) {
           if (browser === "Chrome" || browser === "Edge") {
             await scanner.enableTapToFocus();
           }
-          if (isTorchSupported === "true") {
+          if (isTorchSupported) {
             if (isTorchOn) {
               await scanner.turnOnTorch();
             } else {
@@ -222,9 +214,12 @@ export default function VideoDecode({ barcode, setBarcode }) {
   };
 
   useEffect(() => {
-    readBarcode();
+    const delayTimer = setTimeout(() => {
+      readBarcode();
+    }, 500);
 
     return () => {
+      clearTimeout(delayTimer);
       (async () => {
         if (pScanner.current) {
           (await pScanner.current).destroyContext();
@@ -236,13 +231,12 @@ export default function VideoDecode({ barcode, setBarcode }) {
     isTakePicture,
     autoFocus,
     autoZoom,
-    zoomFactor,
     scanMode,
     sound,
     vibrate,
     maxHeight,
-    maxWidth,
     firstGrayscaleTransformationMode,
+    debouncedZoomFactor,
   ]);
 
   return barcode.showScanner ? (
@@ -312,7 +306,7 @@ export default function VideoDecode({ barcode, setBarcode }) {
             >
               <Gear size={28} weight="bold" />
             </button>
-            {isTorchSupported === "true" ? (
+            {isBrowserSupportTorch ? (
               <button
                 type="button"
                 aria-label="turn on or off torch"
@@ -359,6 +353,7 @@ export default function VideoDecode({ barcode, setBarcode }) {
                   value={zoomFactor}
                   className="slider"
                   onChange={handleSliderChange}
+                  onBlur={() => console.log(zoomFactor)}
                   trackStyle={{ height: 8, marginLeft: -2, marginBottom: 2 }}
                   handleStyle={{
                     height: 48,
